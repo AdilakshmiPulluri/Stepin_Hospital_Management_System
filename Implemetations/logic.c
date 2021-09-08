@@ -40,3 +40,11 @@ void newrecord(int l)
 	fflush(stdin);
 	scanf("%[^\n]",p.disease);
 }
+char* exitt(void)
+{
+	/*system("cls");
+	printf("EXITING THE PROGRAM ");*/
+	char* message="EXITING THE PROGRAM";
+    return message;
+	 
+}
