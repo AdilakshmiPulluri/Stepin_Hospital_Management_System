@@ -27,6 +27,7 @@ void newrecord(int l);
 void print();
 void displaytest();
 void mainscreen();
+char* exitt(void);
 void newrecord1();
 void displaydepartment();
 void edit1();
@@ -200,7 +201,7 @@ int main()
 		       	cprintf("SAVING UR SETTINGS"); 
 			cprintf("BYE...........");
 			getch();
-			exit(1);
+			exitt();
 			break;
 			}
 		case '4':
@@ -1158,4 +1159,12 @@ void mainscreen()
 	cprintf("Jawalakhel, Lalitpur");
 	
 	cprintf("--------------------");
+}
+char* exitt(void)
+{
+	/*system("cls");
+	printf("EXITING THE PROGRAM ");*/
+	char* message="EXITING THE PROGRAM";
+    return message;
+	 
 }
