@@ -8,7 +8,8 @@ int main()
 	clrscr();
 	mainscreen();
 	label3:
-	
+	printf("*******Welcome To ********);
+	printf("*****8ABC hospital***");
 	printf("Enter today's Date(yyyy/mm/dd)");
 	fflush(stdin);
 	scanf("%[^\n]",date2);
