@@ -1,0 +1,1161 @@
+
+
+#include <stdio.h>
+#include<conio.h>
+#include<string.h>
+#include<stdlib.h>
+#define rw 80
+#define cl 50
+
+FILE*fp,*fp1,*f1,*f2;
+int s,z;
+char fn1[]="opd12.patient";
+char fn2[]="oopd12.patient";
+struct hospital{
+		char name[20],address[20],ch;
+		int age,roomno,sn;
+		char disease[30],department[20],date[15];
+		char recommendation[50],category[30];
+		char test[15][20];
+		float testfee[15];
+		float totalfee;
+		float balance;
+		}p,q;
+char string[20];
+typedef struct hospital ABC;
+void newrecord(int l);
+void print();
+void displaytest();
+void mainscreen();
+void newrecord1();
+void displaydepartment();
+void edit1();
+void editrecord();
+void switch1();
+int main()
+{
+   int a,i,n,y;
+	char c,d;
+	char date1[15],date2[15],string1[20];
+	unsigned int tsz;
+
+	clrscr();
+	mainscreen();
+	label3:
+	
+	printf("Enter today's Date(yyyy/mm/dd)");
+	fflush(stdin);
+	scanf("%[^\n]",date2);
+	if((date2[4]!='/')||(date2[7]!='/')||(date2[5]>'3')||(date2[8]>'3'))
+	{
+		clrscr();
+		mainscreen();
+		
+		cprintf("Wrong Entry");
+		goto label3;
+	}
+	clrscr();
+	mainscreen();
+	label1:
+
+
+	lowvideo();
+	cprintf("Enter the corresponding no");
+	cprintf("1.Add new patient record");
+	cprintf("2.Search  or edit record");
+	cprintf("3.Know the records of patients");
+	cprintf("4.Delete the records");
+	cprintf("5.Exit from the program");
+	fflush(stdin);
+	scanf("%c",&d);
+	switch(d)
+	{
+		case '1':
+		      {
+
+			{
+				if((fp=fopen(fn1,"rb"))==NULL)
+				s=1;
+				else
+				{
+				while(fread(&p,sizeof(ABC),1,fp))
+				s=1+p.sn;
+				}
+				fclose(fp);
+			}
+			clrscr();
+			mainscreen();
+			label:
+		
+			cprintf("Enter `o' for O.P.D. & `e'for Emergency");
+			
+			fflush(stdin);
+			scanf("%c",&c);
+			if(c=='o')
+			{
+				clrscr();
+				mainscreen();
+				
+				cprintf("ADDING NEW O.P.D.PATIENT RECORD");
+				
+				cprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				newrecord(s);
+				newrecord1();
+
+				if((fp=fopen(fn1,"ab+"))==NULL)
+				{
+					printf("Cannot open the file f1");
+					getch();
+					exit(1);
+				}
+				for(a=0;a<15;a++)
+				p.testfee[a]=0;
+				strcpy(&p.test[1][0],"0");
+				p.totalfee=0;p.balance=0;
+				strcpy(&p.test[0][0],"O.P.D. charge");
+				p.testfee[0]=200;
+
+				p.totalfee=200;
+				strcpy(p.category,"O.P.D.Patient");
+				p.balance=200;
+				strcpy(p.recommendation,"Admitted to O.P.D.");
+				strcpy(p.date,date2);
+				fwrite(&p,sizeof(p),1,fp);
+				fclose(fp);
+				if((fp=fopen(fn2,"ab+"))==NULL)
+				{
+						printf("Cannot open the file f1");
+						getch();
+						exit(1);
+				}
+				fwrite(&p,sizeof(p),1,fp);
+				fclose(fp);
+
+
+			}
+			else if(c=='e')
+			       {
+				 clrscr();
+				 mainscreen();
+				
+				 cprintf("ADDING NEW EMERGENCY PATIENT RECORD");
+				 
+				 cprintf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				 newrecord(s);
+				 newrecord1();
+				 if((fp=fopen(fn1,"ab+"))==NULL)
+					{
+						printf("Cannot open the file f1");
+						getch();
+						exit(1);
+					}
+					for(a=0;a<15;a++)
+					p.testfee[a]=0;
+					strcpy(&p.test[1][0],"0");
+					p.totalfee=0;p.balance=0;
+
+			       p.totalfee=250;
+			       strcpy(p.date,date2);
+			       strcpy(&p.test[0][0],"Emergency Charge");
+			       strcpy(p.category,"Emergency Patient");
+			       strcpy(p.recommendation,"Admitted to Emergency");
+			       p.testfee[0]=250;
+			       p.balance=250;
+			       fwrite(&p,sizeof(p),1,fp);
+			       fclose(fp);
+			      if((fp=fopen(fn2,"ab+"))==NULL)
+				{
+						printf("Cannot open the file f1");
+						getch();
+						exit(1);
+				}
+				fwrite(&p,sizeof(p),1,fp);
+				fclose(fp);
+
+			       }
+			else
+			{
+				clrscr();
+				mainscreen();
+			
+				cprintf("Wrong choice");
+				
+				goto label;
+			}
+			break;
+		      }
+		case '2':
+		      {
+		       clrscr();
+		       mainscreen();
+		       editrecord();
+		       break;
+		      }
+		case '5':
+		      {
+			clrscr();
+			mainscreen();
+			
+			cprintf("THANK U");gotoxy(30,26);
+		       	cprintf("SAVING UR SETTINGS"); 
+			cprintf("BYE...........");
+			getch();
+			exit(1);
+			break;
+			}
+		case '4':
+			{
+				if((fp=fopen(fn1,"rb"))==NULL)
+				{
+					printf("cannot open the file");
+					getch();
+					exit(1);
+				}
+
+				if((f1=fopen("delete","wb"))==NULL)
+				{
+					printf("cannot open the file");
+					getch();
+					exit(1);
+				}
+
+				clrscr();
+				mainscreen();
+				 cprintf("patient no");
+				
+			       fflush(stdin);
+				scanf("%d",&y);
+				while(fread(&p,sizeof(ABC),1,fp))
+					if(p.sn!=y)
+					fwrite(&p,sizeof(ABC),1,f1);
+				clrscr();
+				mainscreen();
+				fseek(fp,(y-1)*sizeof(ABC),SEEK_SET);
+				fread(&p,sizeof(ABC),1,fp);
+				print();
+				edit1();
+				//gotoxy(25,46);
+				cprintf("Press `ENTER' to delete this record");
+				getch();
+				fclose(fp);
+				fclose(f1);
+				remove(fn1);
+				rename("delete",fn1);
+
+				if((fp=fopen(fn2,"rb"))==NULL)
+				{
+					printf("cannot open the file");
+					getch();
+					exit(1);
+				}
+
+				if((f1=fopen("delete","wb"))==NULL)
+				{
+					printf("cannot open the file");
+					getch();
+					exit(1);
+				}
+				while(fread(&p,sizeof(ABC),1,fp))
+					if(p.sn!=y)
+					fwrite(&p,sizeof(ABC),1,f1);
+
+
+
+				fclose(fp);
+				fclose(f1);
+				remove(fn2);
+				rename("delete",fn2);
+				clrscr();
+				mainscreen();
+			
+				cprintf("Record succesfully Deleted");
+				getch();
+			
+				break;
+			}
+
+
+		case '3':
+			{       label6:
+				clrscr();
+				mainscreen();
+				
+				cprintf("Enter the corresponding no");
+				cprintf("1.Records of patients in alphabatecal order");
+				cprintf	("2.Records of Emergency //patients");
+				cprintf("3.Records of  patients");
+
+				cprintf("4.Recordsin paricular date");
+				cprintf("5.Return to main menu");
+
+				fflush(stdin);
+				scanf("%c",&d);
+				switch(d)
+				{
+				case '1':
+					{
+					 if((fp=fopen(fn2,"rb+"))==NULL)
+					      {
+						printf("Cannot open the file");
+						getch();
+						exit(1);
+					      }
+					 fseek(fp,0,SEEK_END);
+					 tsz=ftell(fp);
+					 n=(int)(tsz/sizeof(ABC));
+					 for(i=0;i<(n-1);i++)
+					 {
+						for(a=i+1;a<n;a++)
+						{
+						fseek(fp,i*sizeof(ABC),SEEK_SET);
+						fread(&p,sizeof(ABC),1,fp);
+						fseek(fp,a*sizeof(ABC),SEEK_SET);
+						fread(&q,sizeof(ABC),1,fp);
+						if(strcmp(p.name,q.name)>0)
+							{
+							fseek(fp,i*sizeof(ABC),SEEK_SET);
+							fwrite(&q,sizeof(ABC),1,fp);
+							fseek(fp,a*sizeof(ABC),SEEK_SET); fflush(stdin);
+							fwrite(&p,sizeof(ABC),1,fp);
+							}
+						}
+					}
+					rewind(fp);
+					clrscr();
+					mainscreen();
+					
+					cprintf("Ready to Display the patient records according to alphabatecal order of names");
+					
+					cprintf("Press");
+					cprintf(" `Enter' ");  
+					cprintf("to continue");
+					getch();
+					while(fread(&p,sizeof(ABC),1,fp))
+					{
+					clrscr();
+					mainscreen();
+					print();
+				
+					cprintf("DISPLAYING-RECORD-ACCORDING-TO-PATIENTS-NAMES");
+					
+					cprintf("---------------------------------------------");
+					edit1();
+
+					
+					cprintf("Press");
+					cprintf(" `Enter'"); 
+					cprintf(" for next and `r' to quit: ");
+					scanf("%c",&c);
+
+					if(c=='r')
+					{
+					goto label6;
+
+					}
+				
+					getch();
+
+				}
+				clrscr();
+				mainscreen();
+			
+				cprintf("::No Further Records::");
+				getch();
+				fclose(fp);
+				break;
+				}
+			case '5':
+				{
+				clrscr();
+				mainscreen();
+				 goto label1;
+				 }
+			case '2':
+				{
+				clrscr();
+				mainscreen();
+				if((fp=fopen(fn1,"rb"))==NULL)
+					      {
+						printf("Cannot open the file");
+						getch();
+						exit(1);
+					      }
+				
+			
+				cprintf("Ready to Display records of Emergency Patients");
+				
+				cprintf("Press");
+				cprintf(" `Enter' ");
+				cprintf("to continue");
+				getch();
+				while(fread(&p,sizeof(ABC),1,fp))
+				{
+					if(strcmp(p.category,"Emergency Patient")==NULL)
+					{
+					clrscr();
+					mainscreen();
+					print();
+					
+					cprintf("::DISPLAYING-RECORDS-OF-EMERGENCY-PATIENTS::");
+					
+					cprintf("---------------------------------------------");
+					edit1();
+
+					cprintf("Press");
+					cprintf(" `Enter'");
+					cprintf(" for next and `r' to quit: ");
+					scanf("%c",&c);
+
+					if(c=='r')
+					{
+					goto label6;
+					}
+					
+					getch();
+					}
+				}
+				clrscr();
+				mainscreen();
+				
+				cprintf("::No Further Records::"); 
+				getch();
+				fclose(fp);
+				break;
+				}
+			case '3':
+				{
+				clrscr();
+				mainscreen();
+				if((fp=fopen(fn1,"rb"))==NULL)
+					      {
+						printf("Cannot open the file");
+						getch();
+						exit(1);
+					      }
+				
+				cprintf("Ready to Display records of O.P.D Patients");
+				
+				cprintf("Press");
+				cprintf(" `Enter' "); 
+				cprintf("to continue");
+				getch();
+				while(fread(&p,sizeof(ABC),1,fp))
+				{
+					if(strcmp(p.category,"O.P.D.Patient")==NULL)
+					{
+					clrscr();
+					mainscreen();
+					print();
+				
+					cprintf("::DISPLAYING-RECORDS-OF-OPD-PATIENTS::");
+					
+					cprintf("---------------------------------------------");
+					edit1();
+					
+					cprintf("Press");
+					cprintf(" `Enter'");
+					cprintf(" for next and `r' to quit: ");
+					scanf("%c",&c);
+
+					if(c=='r')
+					{
+					goto label6;
+					}
+					
+					getch();
+					}
+				}
+				clrscr();
+				mainscreen();
+				
+				cprintf("::No Further Records::");
+				fclose(fp);
+				break;
+				}
+		case '4':
+				{
+				clrscr();
+				mainscreen();
+				if((fp=fopen(fn1,"rb"))==NULL)
+					      {
+						printf("Cannot open the file");
+						getch();
+						exit(1);
+					      }
+				label8:
+			
+				cprintf("Enter the `Date' of a paricular day(yyyy/mm/dd)");
+				
+fflush(stdin);
+				scanf("%s",string);
+				if((string[4]!='/')||(string[7]!='/')||(string[5]>'3')||(string[8]>'3'))
+				{
+				clrscr();
+				mainscreen();
+				cprintf("Wrong Entry");
+				goto label8;
+				}
+			       //	getch();
+				while(fread(&p,sizeof(ABC),1,fp))
+				{
+					if(strcmp(string,p.date)==NULL)
+					{
+					clrscr();
+					mainscreen();
+					print();
+					
+					cprintf("::DISPLAYING-RECORDS-OF-");
+					cprintf("DATE >%s",p.date);
+				
+					cprintf("---------------------------------------------");
+					edit1();
+
+					
+					cprintf("Press");
+					cprintf(" `Enter'");
+					cprintf(" for next and `r' to quit: ");
+					scanf("%c",&c);
+
+					if(c=='r')
+					{
+					goto label6;
+					}
+					
+					getch();
+					}
+				}
+				clrscr();
+				mainscreen();
+				
+				cprintf("::No Further Records::");  
+				getch();
+				fclose(fp);
+				break;
+				}
+
+			default:
+				{
+				clrscr();
+				mainscreen();
+			
+				cprintf("Wrong choice");
+				 cprintf("Retypng choice");
+
+				goto label6;
+				}
+			}
+		}break;
+
+
+
+
+
+		default:
+		       {
+			clrscr();
+			mainscreen();
+		
+			cprintf("Wrong choice");
+
+			 cprintf("Retype choice");
+			goto label1;
+			}
+
+	}
+	clrscr();
+	mainscreen();
+	goto label1;
+
+    return 0;
+}
+void newrecord(int l)
+{
+	char q;
+	p.sn=l;
+	displaydepartment();
+	
+	cprintf("Record of patient no:");
+	printf(" %d",l);
+	
+	cprintf("Name:");
+
+	
+	cprintf("Address:");
+
+	
+	cprintf("Age: ");
+
+	
+	cprintf("Sex(m/f): ");
+
+	
+	cprintf("Disease Descrp:");
+	
+	cprintf("(In Short)");
+
+	
+	cprintf("Reff. Specialist no:");
+	fflush(stdin);
+	scanf("%[^\n]",p.name);
+	p.name[0]=toupper(p.name[0]);
+
+	fflush(stdin);
+	scanf("%[^\n]",p.address);
+
+	fflush(stdin);
+	scanf("%d",&p.age);
+	
+	fflush(stdin);
+	scanf("%c",&p.ch);
+	fflush(stdin);
+	scanf("%[^\n]",p.disease);
+}
+void newrecord1()
+{
+	  char q;
+	 fflush(stdin);
+	
+	scanf("%c",&q);
+	switch(q)
+	{
+		case '1':
+			{      
+			       cprintf("Reff.Specialist:");
+			       printf("Generalphysician");
+			       strcpy(p.department,"General Physician");
+			       
+				cprintf("Room no:");
+				fflush(stdin);
+				scanf("%d",&p.roomno);
+			       	getch();
+
+				break;
+
+			}
+		case '2':
+			{     
+			       cprintf("Reff.Specialist:");
+			       printf("E.N.T.");
+			       gotoxy(5,39);
+			       cprintf("Room no:");
+			       printf("302");
+			       strcpy(p.department,"E.N.T");
+				p.roomno=302; getch();
+				break;
+			}
+			case '3':
+			{      
+			       cprintf("Reff.Specialist:");
+			       printf("Cardiologist");
+			      
+			       cprintf("Room no:");
+			       printf("509");
+			       strcpy(p.department,"cardiologist");
+				p.roomno=509; getch();
+				break;
+			}
+			case '4':
+			{      
+			       cprintf("Reff.Specialist:");
+			       printf("Dermatologist");
+			      
+			       cprintf("Room no:");
+			       printf("406");
+			       strcpy(p.department,"Dermatologist");
+				p.roomno=406; getch();
+				break;
+			}
+
+			case '5':
+			{     
+			       cprintf("Reff.Specialist:");
+			       printf("Gastroenteroiogist");
+			      
+			       cprintf("Room no:");
+			       printf("308");
+			       strcpy(p.department,"Gastroentrologist");
+				p.roomno=308; getch();
+				break;
+			}
+			case '6':
+			{      
+			       cprintf("Reff.Specialist:");
+			       printf("Pediatrician");
+			      
+			       cprintf("Room no:");
+			       printf("207");
+			       strcpy(p.department,"Padiatrician");
+				p.roomno=207; getch();
+				break;
+			}
+			case '7':
+			{      
+			       cprintf("Reff.Specialist:");
+			       printf("EYE Specialist");
+			      
+			       cprintf("Room no:");
+			       printf("102");
+			       strcpy(p.department,"EYE Specialist");
+				p.roomno=102; getch();
+				break;
+			}
+			case '8':
+			{     
+			       cprintf("Reff.Specialist:");
+			       printf("Nephrologist");
+			       
+			       cprintf("Room no:");
+			       printf("109");
+			       strcpy(p.department,"Nephrologist");
+				p.roomno=109; getch();
+				break;
+			}
+			case '9':
+			{      
+			       cprintf("Reff.Specialist:");
+			       printf("General Surgeon");
+			       strcpy(p.department,"General Surgeon");
+			      
+				cprintf("Room no:");
+				fflush(stdin);
+				scanf("%d",&p.roomno);
+			        //getch();
+				break;
+			}
+			case '10':
+			{     
+			       cprintf("Reff.Specialist:");
+			       printf("Accumpunturist");
+			       strcpy(p.department,"Accumpunturist");
+			     
+				cprintf("Room no:");
+				fflush(stdin);
+				scanf("%d",&p.roomno);
+
+				//  getch();
+				break;
+			}
+		default:
+			{
+			
+			cprintf("Reff.Specialist:");
+			fflush(stdin);
+			scanf("%[^\n]",p.department);
+			
+			cprintf("Room no:");
+			fflush(stdin);
+			scanf("%d",&p.roomno);
+
+			return;
+			}
+	}
+}
+
+void displaydepartment()
+{
+	int i;
+	
+	cprintf(":Specialists:");
+	
+	cprintf("---------------");
+
+	cprintf("Room No.");
+	
+	cprintf("----------");
+	
+	cprintf("1.General Physician");
+	
+	cprintf("201,202");
+	
+	cprintf("2.E.N.T");
+
+	cprintf("302");
+
+	cprintf("3.Cardiologist");
+	
+	cprintf("509");
+	
+	cprintf("4.Dermatologist");
+	
+	cprintf("406");
+	
+	cprintf("5.Gastroenterologist");
+	
+	cprintf("308");
+
+	cprintf("6.Pediatrician");
+
+	cprintf("207");
+	
+	cprintf("7.EYE Specialist");
+	
+	cprintf("102");
+	
+	cprintf("8.Nephrologist");
+
+	cprintf("109");
+
+	cprintf("9.General Surgeon");
+;
+	cprintf("407,408");
+
+	cprintf("412,413");
+
+	cprintf("10.Accupuncturist");
+
+	cprintf("123,119");
+	
+	for(i=14;i<=45;i++)
+	{
+	
+		cprintf("|");
+	}
+}
+void print()
+{
+	
+	cprintf("DISPLAYING RECORDS");
+	
+	cprintf("--------------------");
+	;
+	cprintf("Patient no:");
+cprintf("%d",p.sn);
+	cprintf("Name:");
+	cprintf(" %s",p.name);
+	cprintf("Address:");
+	cprintf(" %s",p.address);
+	cprintf("Age:");
+	cprintf("%d",p.age);
+	cprintf("Sex:");
+	cprintf(" %c",p.ch);
+	cprintf("Date of Reg.:");
+	cprintf("%s",p.date);
+	cprintf("Room no:");
+	cprintf(" %d",p.roomno);
+	cprintf("Department:");
+	cprintf(" %s",p.department);
+	cprintf("Category:");
+	cprintf(" %s",p.category);
+
+}
+void edit1()
+{
+	int i,k;
+	
+	cprintf("Details:");
+	cprintf(" %s",p.recommendation);
+	cprintf("Press");
+	cprintf(" `Enter'");
+	cprintf(" for financial records");
+	getch();
+	clrscr();
+	mainscreen();
+
+	cprintf("The list of expenditure of patient no:");
+	printf("%d",p.sn);
+	for(z=0,i=0,k=11;p.testfee[z]!=NULL;i++,z++)
+	{
+		textcolor(15);;
+		cprintf("%d)",i+1);      
+		cprintf(" %s",&p.test[z][0]);
+
+		cprintf("Rs.%0.2f",p.testfee[z]);
+		k=k+2;
+	}
+	
+	cprintf("Total charge=");
+	cprintf("Rs.%0.2f",p.totalfee);
+	
+	cprintf("Total Deposited:");15);
+	cprintf("Rs.%0.2f",p.balance);
+	if(p.totalfee>p.balance)
+	{
+		
+		cprintf("Total money to pay=");
+		
+		cprintf("%0.2f",p.totalfee-p.balance);
+	}
+	else
+	{
+		
+		cprintf("Total money to return=");
+		
+		cprintf("%0.2f",p.balance-p.totalfee);
+	}
+}
+void switch1()
+{
+	int x,i;
+	float d,lk;
+	char v;
+	label2:
+	
+	cprintf("Enter");;
+	cprintf("1.Add Details");
+
+	cprintf("2.Change Specialist");
+	
+	cprintf("3.Deposit balance");
+	cprintf("4.Add test");
+
+	cprintf("5.Return to main menu");
+	
+	fflush(stdin);
+	scanf("%d",&x);
+	switch(x)
+	{
+		case 1:
+		      {
+			clrscr();
+			mainscreen();
+			
+			cprintf("ADDING DETAILS");
+			
+			cprintf("----------------");
+			
+			cprintf("Previous Details:");
+			
+			cprintf(" %s ",p.recommendation);
+			
+			strcat(p.recommendation,"-> ");
+			printf("New Details:");
+			fflush(stdin);
+			scanf("%[^\n]",string);
+			strcat(p.recommendation,string);
+			break;
+		      }
+		case 2:
+		      {
+			clrscr();
+			mainscreen();
+			displaydepartment();
+			
+			cprintf("CHANGING SPECIALIST");
+			
+			cprintf("---------------------");
+			
+			cprintf("Previous Specialist:");
+		
+			cprintf(" %s ",p.department);
+			
+			cprintf(":Enter the new changed Specialist;");
+		
+			cprintf("Reff. Specialist no:");
+			newrecord1();
+			break;
+		      }
+		case 3:
+		      {
+		       clrscr();
+		       mainscreen();
+		       
+		       cprintf("DEPOSITING MONEY");
+		       
+		       cprintf("---------------------");
+		       
+		       
+		       cprintf("Deposited balance: Rs.");
+		       fflush(stdin);
+		       scanf("%f",&d);
+		       p.balance=p.balance+d;
+		       break;
+		      }
+		case 4:
+		      {
+		       clrscr();
+		       mainscreen();
+		       displaytest();
+		       cprintf("Type `esc' tn content to stop");
+		       
+		       cprintf("Contents");
+			cprintf("Rs.");lk=0;
+		       for(i=17;1;i++,z++)
+		       {
+				//toxy(45,i);
+				fflush(stdin);
+				cprintf("%c ",16);
+				scanf("%s",&p.test[z][0]);
+				if(strcmp(&p.test[z][0],"esc")==0)
+				{       labelh:
+					
+					cprintf("Paid/Unpaid (p/u):");
+					scanf("%c",&v);
+					if(v=='p')
+					{
+					p.balance=p.balance+lk;
+					}
+					else if(v!='u')
+					{       
+					       	cprintf("Wrong Choice");
+						goto labelh;
+					}
+					break;
+				}
+				
+				fflush(stdin);
+				scanf("%f",&p.testfee[z]);
+				lk=lk+p.testfee[z];
+				p.totalfee=p.totalfee+p.testfee[z];
+				i++;
+		       }
+		       break;
+		      }
+		case 5:
+		      {
+				       return;
+		      }
+
+		default:
+		       {
+		       clrscr();
+		       mainscreen();
+		       cprintf("Wromg choice");
+		       goto label2;
+		       }
+
+	}
+	clrscr();
+	mainscreen();
+	goto label2;
+}
+void editrecord()
+{
+	int y,x;
+	
+	cprintf("Enter the patient `record no' or `Full name': ");
+
+	fflush(stdin);
+	scanf("%[^\n]",string);
+	string[0]=toupper(string[0]);
+	y=atoi(string);
+	clrscr();
+	mainscreen();
+	if((fp=fopen(fn1,"rb+"))==NULL)
+	{
+		printf("\n cannot open the record file 1");
+		getch();
+		exit(1);
+	}
+      // rewind(fp);
+	while(fread(&p,sizeof(p),1,fp))
+	{
+	if((p.sn==y)||(strcmp(p.name,string)==0))
+		{
+			print();
+			edit1();
+			printf("Press `1'to edit or add and any key togo to main menu");
+			fflush(stdin);
+			scanf("%d",&x);
+			if(x==1)
+			{
+			  clrscr();
+			  mainscreen();
+			  switch1();
+			}
+			else
+			return;
+			rewind(fp);
+			fseek(fp,(p.sn-1)*sizeof(p),SEEK_SET);
+			fwrite(&p,sizeof(p),1,fp);
+			fclose(fp);
+			break;
+		}
+	}
+
+	if(p.sn!=y)
+	{
+		
+		cprintf("There is no record available"); 
+
+		printf("Press Enter to continue:"); getch();
+	}
+
+
+}
+void displaytest()
+{       int i;
+
+	cprintf("::ADDING SERVICES::");
+	cprintf("----------------------------");
+
+	cprintf(":PRICE LIST:");
+	
+	cprintf("---------------------");
+	
+	cprintf("1.X-Ray");
+	
+	cprintf("Rs. 300.00");
+	
+	cprintf("2.Ultra-sound");
+	
+	cprintf("Rs. 500.00");
+	
+	cprintf("3.C.T.Scan");
+	
+	cprintf("Rs.1800.00");
+	
+	cprintf("4.TC,DC,HB");
+	
+	cprintf("Rs.  90.00");
+	
+	cprintf("5.Urine R/E");
+	
+	cprintf("Rs.  80.00");
+	
+	cprintf("6.Blood C/S");
+	
+	
+	cprintf("7.Biliribin D/T");
+
+	cprintf("Rs. 200.00");
+
+	cprintf("8.Stool Test");
+
+	cprintf("Rs.  60.00");
+	
+	cprintf("9.Bed Charge");
+
+	cprintf("Rs. 150.00");
+
+	cprintf("10.Sugar Test");
+	
+	cprintf("Rs. 400.00");
+	
+	for(i=10;i<=46;i++)
+	{
+		gotoxy(41,i);
+		cprintf("|");
+	}
+}
+void mainscreen()
+{
+	int i,j;
+	clrscr();
+	for(i=2,j=2;i<rw;j++)
+	{
+		if(j>15)
+		j=2;
+		
+		cprintf("%c",15);
+		
+		cprintf("%c",15);
+		i++;
+
+	}
+	for(i=2,j=2;i<;i++,j++)
+	{
+		if(j>15)
+		j=2;
+		
+		cprintf("%c",15);
+		
+		cprintf("%c",15);
+
+	}
+
+	cprintf("ABC HOSPITAL");
+	
+	cprintf("Jawalakhel, Lalitpur");
+	
+	cprintf("--------------------");
+}
